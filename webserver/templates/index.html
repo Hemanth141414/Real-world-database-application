@@ -8,30 +8,62 @@
 <link rel="stylesheet" href="static/css/index.css">
     
 <script type="text/javascript">
-  $(document).ready(function(){
-    $('.order').click(function(e) {
-    let button = $(this);
-    if(!button.hasClass('animate')) {
-        button.addClass('animate');
-        setTimeout(() => {
-            button.removeClass('animate');
-            $("#form-id").submit();
-        }, 9000);
-    }
-  });
-}); 
+var test;    
+$(document).ready(function(){
+    $("#validation-msg").hide();  
+});
+
+function runAnime(){
+    $("#validation-msg").hide(); 
+       let button = $("#go-button-id");
+       if(!button.hasClass('animate')) {
+           button.addClass('animate');
+           setTimeout(() => {
+               button.removeClass('animate');
+               $("#form-id").submit();
+           }, 9000);
+       }
+}      
+    
+function validation(data){
+    test = data;
+    var track_check = false;
+    var mail_pass_check = false;
+    var email = $("input[name = 'Email Address']").val().trim();
+    var password = $("input[name = 'Password']").val().trim();
+    var tracking_no = $("input[name = 'Tracking Id']").val().trim();
+    track_check = tracking_no != "";
+    mail_pass_check = email != "" && password != "";
+    if(track_check || mail_pass_check){   
+       if(mail_pass_check){
+           if(data[email] == password){
+               runAnime();
+           } else{
+               $("#validation-msg").show();  
+           }
+       }else{
+          //trackcheck code. 
+       } 
+      } else {
+         $("#validation-msg").show();  
+      }
+  }  
 </script>
 <body>
 <h1 class="navbar navbar-expand-lg bg-primary text-white mb-2" style = "width: 100%; top: 0px; position: absolute; background-color: #343a40!important">TrackLite: Tracking app</h1>
 <img src="static/images/digital-globe.jpg", alt = "logo", style = "width: 100%; height: 100%; opacity: 0.5">
 
 <form id ="form-id" method="POST" action="/customerDetails">
-    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute; top: 300px; left: 214px; background-color: #343a40!important; border-radius: 50px;">Email and Password of Customer:   
-    <input type="text" name="Email Address">
-    <input type="text" name="Password">
+    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute; top: 300px; left: 214px; background-color: #343a40!important; border-radius: 50px;">Customer Email and Password :   
+    <input type="text" name="Email Address", style="text-overflow: ellipsis!important;">
+    <input type="text" name="Password", style="text-overflow: ellipsis!important;">
+    </p>
+    <div style = "top: 362px; position: absolute; left: 439px;">OR</div>
+    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute;top: 400px;left: 214px;background-color: #343a40!important;border-radius: 50px;">Tracking Number:   
+    <input type="text" name="Tracking Id", style="text-overflow: ellipsis!important;">
     </p>
 </form>
-<button class="order" style = "position: absolute"><span class="default">Go</span><span class="success">Fetching...<svg viewbox="0 0 12 10">
+<button class="order", id = "go-button-id", onclick = "validation({{data}})", style = "position: absolute; top: 393px; left: 732px;"><span class="default">Go</span><span class="success">Fetching...<svg viewbox="0 0 12 10">
             <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
         </svg></span>
     <div class="box"></div>
@@ -44,6 +76,7 @@
         <div class="light bottom"></div>
     </div>
     <div class="lines"></div>
-    </button>     
+    </button> 
+    <div id = "validation-msg", style="top: 465px; position:absolute; color: red;">Please enter the values correctly and then click Go</div>
 </body>
 </html>

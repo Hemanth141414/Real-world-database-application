@@ -90,6 +90,8 @@ def teardown_request(exception):
 # see for routing: https://flask.palletsprojects.com/en/1.1.x/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
+usernames_Pass = {}
+
 @app.route('/')
 def index():
   """
@@ -109,10 +111,9 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
+  cursor = g.conn.execute("SELECT email_id, password FROM Customer")
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    usernames_Pass[result['email_id']] = result['password'] # can also be accessed using result[0]
   cursor.close()
 
   #
@@ -141,7 +142,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  context = dict(data = usernames_Pass)
 
 
   #
@@ -161,7 +162,7 @@ def index():
 
 @app.route('/back')
 def back():
-    context = dict(data = [])
+    context = dict(data = usernames_Pass)
     return render_template("index.html", **context)
 
 @app.route('/another')
