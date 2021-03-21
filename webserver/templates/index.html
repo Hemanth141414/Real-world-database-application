@@ -1,23 +1,49 @@
+<!DOCTYPE html>
+
 <html>
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: arial;
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>    
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" href="static/css/index.css">
+    
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.order').click(function(e) {
+    let button = $(this);
+    if(!button.hasClass('animate')) {
+        button.addClass('animate');
+        setTimeout(() => {
+            button.removeClass('animate');
+            $("#form-id").submit();
+        }, 9000);
     }
-  </style>
-
-
+  });
+}); 
+</script>
 <body>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-  <h1 class="navbar navbar-expand-lg bg-primary text-white mb-3">TrackLite: Tracking app</h1>
+<h1 class="navbar navbar-expand-lg bg-primary text-white mb-2" style = "width: 100%; top: 0px; position: absolute; background-color: #343a40!important">TrackLite: Tracking app</h1>
+<img src="static/images/digital-globe.jpg", alt = "logo", style = "width: 100%; height: 100%; opacity: 0.5">
 
-
-<form method="POST" action="/customerDetails">
-<p class="navbar navbar-expand-lg bg-primary text-white mb-2">Email and Password of Customer: <input type="text" name="Email Address">
+<form id ="form-id" method="POST" action="/customerDetails">
+    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute; top: 300px; left: 214px; background-color: #343a40!important; border-radius: 50px;">Email and Password of Customer:   
+    <input type="text" name="Email Address">
     <input type="text" name="Password">
-   <input type="submit" value="Go"></p>
+    </p>
 </form>
+<button class="order" style = "position: absolute"><span class="default">Go</span><span class="success">Fetching...<svg viewbox="0 0 12 10">
+            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+        </svg></span>
+    <div class="box"></div>
+    <div class="truck">
+        <div class="back"></div>
+        <div class="front">
+            <div class="window"></div>
+        </div>
+        <div class="light top"></div>
+        <div class="light bottom"></div>
+    </div>
+    <div class="lines"></div>
+    </button>     
 </body>
-
-
 </html>

@@ -1,23 +1,25 @@
+<!DOCTYPE html>
 <html>
-  <style>
-    body{ 
+   <style>
+      body{ 
       font-size: 15pt;
       font-family: arial;
-    }
-  </style>
-
-
-<body>
-  <h1>Entered User details</h1>
-    <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
-    
-<p><a href="back">Go to the index page</a></p>
-
-</body>
-
-
+      }
+   </style>
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <body>
+      <img src="static/digital-globe.jpg", alt = "logo", style = "width: 100%; height: 100%; opacity: 0.5"/>
+      <h1 style= "position: absolute; top: 300px; left: 100px">Entered User details</h1>
+        <div style= "position: absolute; top: 330px; left:100px">
+             {% for n in data1 %}
+             <div>{{n}}</div>
+             {% endfor %}
+        </div>
+        <div style= "position: absolute; top: 350px; left:100px">
+             {% for n in data2 %}
+             <div>{{n}}</div>
+             {% endfor %}
+        </div>
+        <a href = 'back', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute;"> &#x25C1; Back to Home</a>
+        </body>
 </html>

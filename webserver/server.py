@@ -12,10 +12,11 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, url_for
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app = Flask(__name__, template_folder=tmpl_dir)
+stc_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+app = Flask(__name__, template_folder=tmpl_dir, static_folder=stc_dir)
 
 
 #
@@ -165,7 +166,7 @@ def back():
 
 @app.route('/another')
 def another():
-  return render_template("another.html")
+  return render_template("track.html")
 
 @app.route('/customerDetails', methods=['POST'])
 def customerDetails():
@@ -177,8 +178,8 @@ def customerDetails():
     names.append(result['first_name'] + result['last_name'])  # can also be accessed using result[0]
     emails.append(result['email_id']) 
   cursor.close()
-  context = dict(data = names)
-  return render_template("another.html", **context)
+  context = dict(data1 = names, data2 = emails)
+  return render_template("trackstatus.html", **context)
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
