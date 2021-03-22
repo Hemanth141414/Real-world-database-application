@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" id="font-awesome-css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" href="static/css/customerinfo.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>    
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+
+<script type="text/javascript">
+    var pageData;
+    var tracking = [];
+    var pck;
+    $(document).ready(function(){
+        $("#tableID").find('tbody').append("<tr><td>row content</td></tr>")
+    });
+    function load(data, packagesData, trackingData){
+       pageData = data;
+        var packages = [];
+        if (packagesData != undefined && packagesData.length > 0){
+            packages = packagesData;
+            pck = packagesData;
+        }
+        if (trackingData != undefined && trackingData.length > 0){
+            tracking = trackingData;
+        }
+        $("#name-id").text($("#name-id").text() + ": " + pageData.name);
+        $("#mail-id").text($("#mail-id").text() + ": " + pageData.email_id);
+        $("#address-id").text($("#address-id").text() + ": " + pageData.address);
+        var str = "";
+        for (var i in packages) {
+            var str1 = "<td>" + packages[i]["package_id"] + "</td>";
+            var str2 = "<td>" + packages[i]["service_type"] + "</td>";
+            var str3 = "<td>" + packages[i]["category"] + "</td>";
+            var str4 = "<td>" + packages[i]["weight"] + "</td>";
+            var str5 = "<td>" + packages[i]["is_fragile"] + "</td>";
+            var str6 = "<td>" + packages[i]["is_hazardous"] + "</td>";
+            var str7 = '<td><button class = "btn btn-primary", style = "height: 30px; width: 50px; background-color: #343a40!important", onclick = buttonclick(this)><span style = "font-size: small;">Track</span></button></td>';
+            str = str + "<tr>" + str1 + str2 + str3 + str4 + str5 + str6 + str7 + "</tr>";
+        }
+        $("#package-table-id").find('tbody').append(str);  
+    }
+    function buttonclick(e){
+        debugger;
+        var val = $($(e.parentElement.parentElement).find('td')[0]).text(); 
+        if(tracking.indexOf(val) >= 0){
+          $("#hidden-input-id").val(val);
+          $("#form-id").submit();  
+        } else {
+           alert("No tracking available for this package!"); 
+        } 
+    }
+</script>    
+   
+<style>
+ 
+    </style>
+    
+<body onload="load({{data}}, {{packages}}, {{trackingIds}})">
+<div class="truck" style = "top: 70px; position: absolute;">
+  <span class="cab"></span>
+  <span class="smoke"></span>
+</div>
+    <ul id="details", style = "top: 140px; position: absolute; font-size: x-large;">
+  <li id = "name-id">
+    Name:
+  </li>
+  <li id = "mail-id">
+    E-mail:
+  </li>
+  <li id = "address-id">
+    Sender Address:
+  </li>  
+  <li id = "packages-id">
+    <table class="table table-bordered track_tbl", id = "package-table-id">
+        <thead>
+            <tr class="active">
+                <th>Package Number</th>
+                <th>Service Type</th>
+                <th>Category</th>
+                <th>Weight</th>
+                <th>Fragile</th>
+                <th>Hazardous</th>
+                <th>Track for Details</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table> 
+  </li> 
+</ul>
+<a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1; Back to Home</a>
+<form id ="form-id", method="GET", action = "/trackstatus", type = hidden>
+    <input id = "hidden-input-id", type="hidden", name="package", style="text-overflow: ellipsis!important;">
+ </form>
+</body>
+</html>    

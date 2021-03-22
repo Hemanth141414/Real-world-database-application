@@ -15,18 +15,36 @@
            $("#track-details").show(); 
         })
     });
+    function load(data){
+        var str = "";
+        for (var i in data) {
+            var str0 = '<td class="track_dot"><span class="track_line"></span></td>'
+            var str1 = "<td>" + data[i]["area"] + "</td>";
+            var str2 = "<td>" + data[i]["departure_time"] + "</td>";
+            var str3 = "";
+            if(data[i]["mode"] == "Road"){
+                str3 = '<td><img src="static/images/truck.png", alt = "logo", style = "width: 100px; height: 50px;"></td>';
+            }else if(data[i]["mode"] == "Air Transport"){
+                str3 = '<td><img src="static/images/plane.png", alt = "logo", style = "width: 100px; height: 50px;"></td>';
+            }else if(data[i]["mode"] == "Sea Route"){
+                str3 = '<td><img src="static/images/container-ship.png", alt = "logo", style = "width: 100px; height: 50px;"></td>';
+            }
+            str = str + "<tr>" + str0 + str1 + str2 + str3 + "</tr>";
+        }
+         $("#track-table-id-1").find('tbody').append(str); 
+    }
 </script>
   
-<body>
+<body onload="load({{data}})">
 <a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1; Back to Home</a>
 <div class="row shop-tracking-status", style ="top: 100px; position: absolute; width: 100%;">    
     <div class="col-md-12">
-        <h4>Your order status:</h4>
+        <h4>Your order status: Click on Tracking icon for details</h4>
         <div class="well", style = "height: 180px; width: 100%; position: absolute;">    
             <div class="order-status", style = "height: 100px; top: -87px">
                 <div class="order-status-timeline">
                     <!-- class names: c0 c1 c2 c3 and c4 -->
-                    <div class="order-status-timeline-completion c3"></div>
+                    <div class="order-status-timeline-completion c3" style = "width: 60%;"></div>
                 </div>
                 <div class="image-order-status image-order-status-new active img-circle">
                     <span class="status">Accepted</span>
@@ -37,8 +55,8 @@
                     <div class="icon"></div>
                 </div>
                 <div id ="shipped-div-id", class="image-order-status image-order-status-intransit active img-circle">
-                    <span class="status">Shipped</span>
-                    <div class="icon"></div>
+                    <span class="status">Tracking</span>
+                    <div class="icon" style = "cursor:pointer;"></div>
                 </div>
                 <div class="image-order-status image-order-status-delivered active img-circle">
                     <span class="status">Delivered</span>
@@ -54,80 +72,16 @@
 </div>
  <div id = "track-details", class="p-4", style = "top: 295px; position: absolute; width: 100%;">
     <h3>Order Tracking details:</h3>
-    <table class="table table-bordered track_tbl">
+    <table class="table table-bordered track_tbl", id = "track-table-id-1">
         <thead>
             <tr class="active">
                 <th></th>
-                <th>S No</th>
-                <th>Status</th>
-                <th>Distibutor</th>
-                <th>Date/Time</th>
+                <th>Distribution Location</th>
+                <th>Departure Time</th>
+                <th>Mode of Transport</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td class="track_dot">
-                    <span class="track_line"></span>
-                </td>
-                <td>01</td>
-                <td>Dispatched from distibutor address</td>
-                <td>Flipkart</td>
-                <td>31/07/2018 22:24:PM</td>
-            </tr>
-            <tr>
-                <td class="track_dot">
-                    <span class="track_line"></span>
-                </td>
-                <td>01</td>
-                <td>Dispatched from distibutor address</td>
-                <td>Flipkart</td>
-                <td>31/07/2018 22:24:PM</td>
-            </tr>
-            <tr>
-                <td class="track_dot">
-                    <span class="track_line"></span>
-                </td>
-                <td>01</td>
-                <td>Dispatched from distibutor address</td>
-                <td>Flipkart</td>
-                <td>31/07/2018 22:24:PM</td>
-            </tr>
-            <tr>
-                <td class="track_dot">
-                    <span class="track_line"></span>
-                </td>
-                <td>01</td>
-                <td>Dispatched from distibutor address</td>
-                <td>Flipkart</td>
-                <td>31/07/2018 22:24:PM</td>
-            </tr>
-            <tr>
-                <td class="track_dot">
-                    <span class="track_line"></span>
-                </td>
-                <td>01</td>
-                <td>Dispatched from distibutor address</td>
-                <td>Flipkart</td>
-                <td>31/07/2018 22:24:PM</td>
-            </tr>
-            <tr>
-                <td class="track_dot">
-                    <span class="track_line"></span>
-                </td>
-                <td>01</td>
-                <td>Dispatched from distibutor address</td>
-                <td>Flipkart</td>
-                <td>31/07/2018 22:24:PM</td>
-            </tr>
-            <tr>
-                <td class="track_dot">
-                    <span class="track_line"></span>
-                </td>
-                <td>01</td>
-                <td>Dispatched from distibutor address</td>
-                <td>Flipkart</td>
-                <td>31/07/2018 22:24:PM</td>
-            </tr>
         </tbody>
     </table> 
   </div>

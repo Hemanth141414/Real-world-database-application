@@ -1,9 +1,4 @@
-<html>
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>    
-<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
-<style>
-  body {
+   body {
     margin: 10%;
     padding-top: 30%;
 }
@@ -203,11 +198,3 @@
         bottom: 0.2em;
     }
 }
-
-</style>
-    
- <div class="truck">
-  <span class="cab"></span>
-  <span class="smoke"></span>
-</div>
-</html>

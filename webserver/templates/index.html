@@ -13,36 +13,45 @@ $(document).ready(function(){
     $("#validation-msg").hide();  
 });
 
-function runAnime(){
+function runAnime(action){
     $("#validation-msg").hide(); 
        let button = $("#go-button-id");
        if(!button.hasClass('animate')) {
            button.addClass('animate');
            setTimeout(() => {
                button.removeClass('animate');
+               $("#form-id").attr('action', action)
                $("#form-id").submit();
            }, 9000);
        }
 }      
     
-function validation(data){
-    test = data;
+function validation(userData, trackIdData, trackingAvail){
+    test = userData;
     var track_check = false;
     var mail_pass_check = false;
     var email = $("input[name = 'Email Address']").val().trim();
     var password = $("input[name = 'Password']").val().trim();
-    var tracking_no = $("input[name = 'Tracking Id']").val().trim();
+    var tracking_no = $("input[name = 'package']").val().trim();
     track_check = tracking_no != "";
     mail_pass_check = email != "" && password != "";
     if(track_check || mail_pass_check){   
        if(mail_pass_check){
-           if(data[email] == password){
-               runAnime();
+           if(userData[email] == password){
+               runAnime("/customerinfo");
            } else{
                $("#validation-msg").show();  
            }
        }else{
-          //trackcheck code. 
+           if(trackIdData[tracking_no]){
+               if(trackingAvail.indexOf(tracking_no) >= 0){
+                   runAnime("/trackstatus");
+               }else{
+                  alert("No tracking available for this Tracking Number!"); 
+               }
+           } else{
+               $("#validation-msg").show();  
+           }
        } 
       } else {
          $("#validation-msg").show();  
@@ -53,17 +62,17 @@ function validation(data){
 <h1 class="navbar navbar-expand-lg bg-primary text-white mb-2" style = "width: 100%; top: 0px; position: absolute; background-color: #343a40!important">TrackLite: Tracking app</h1>
 <img src="static/images/digital-globe.jpg", alt = "logo", style = "width: 100%; height: 100%; opacity: 0.5">
 
-<form id ="form-id" method="POST" action="/customerDetails">
+<form id ="form-id" method="GET">
     <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute; top: 300px; left: 214px; background-color: #343a40!important; border-radius: 50px;">Customer Email and Password :   
     <input type="text" name="Email Address", style="text-overflow: ellipsis!important;">
     <input type="text" name="Password", style="text-overflow: ellipsis!important;">
     </p>
     <div style = "top: 362px; position: absolute; left: 439px;">OR</div>
     <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute;top: 400px;left: 214px;background-color: #343a40!important;border-radius: 50px;">Tracking Number:   
-    <input type="text" name="Tracking Id", style="text-overflow: ellipsis!important;">
+    <input type="text" name="package", style="text-overflow: ellipsis!important;">
     </p>
 </form>
-<button class="order", id = "go-button-id", onclick = "validation({{data}})", style = "position: absolute; top: 393px; left: 732px;"><span class="default">Go</span><span class="success">Fetching...<svg viewbox="0 0 12 10">
+<button class="order", id = "go-button-id", onclick = "validation({{userData}}, {{trackData}}, {{trackingAvail}})", style = "position: absolute; top: 393px; left: 732px;"><span class="default">Go</span><span class="success">Fetching...<svg viewbox="0 0 12 10">
             <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
         </svg></span>
     <div class="box"></div>

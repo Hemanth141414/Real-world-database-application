@@ -91,6 +91,7 @@ def teardown_request(exception):
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
 usernames_Pass = {}
+trackId_usernames = {}
 
 @app.route('/')
 def index():
@@ -111,9 +112,16 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT email_id, password FROM Customer")
+  cursor = g.conn.execute("select email_id, password, package.package_id from customer natural join sender natural join package")
   for result in cursor:
     usernames_Pass[result['email_id']] = result['password'] # can also be accessed using result[0]
+    trackId_usernames[str(result['package_id'])] = result['email_id'] # can also be accessed using result[0]
+  cursor.close()
+
+  tracking = []
+  cursor = g.conn.execute("select package_id from records natural join place natural join trasportaion;")
+  for result in cursor:
+      tracking.append(str(result["package_id"]))
   cursor.close()
 
   #
@@ -142,7 +150,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = usernames_Pass)
+  context = dict(userData = usernames_Pass, trackData = trackId_usernames, trackingAvail = tracking)
 
 
   #
@@ -169,25 +177,66 @@ def back():
 def another():
   return render_template("track.html")
 
-@app.route('/customerDetails', methods=['POST'])
-def customerDetails():
-  email = request.form['Email Address']
-  cursor = g.conn.execute("select first_name, last_name, email_id from customer where email_id ='" + email + "';")
-  names = []
-  emails = []
+@app.route('/customerinfo', methods=['GET'])
+def customerinfo():
+  email = request.args['Email Address']
+  cursor = g.conn.execute("select email_id, (first_name || ' ' || last_name) as name, (Street_Address || ', ' || Street_Name || ', ' || State || ', ' || Country) as address,  package.package_id, Service_Type, Category, Is_Fragile, Is_Hazardous, weight from customer natural join sender natural join package where email_id ='" + email + "';")
+  customerdetails = {}
+  packagearray = []
+  count = 0
   for result in cursor:
-    names.append(result['first_name'] + result['last_name'])  # can also be accessed using result[0]
-    emails.append(result['email_id']) 
+        packagedetails = {}
+        if not customerdetails:
+            customerdetails['name'] = result['name']
+            customerdetails['email_id'] = result['email_id']
+            customerdetails['address'] = result['address']
+        packagedetails["package_id"] = result["package_id"]
+        packagedetails["service_type"] = result["service_type"]
+        packagedetails["category"] = result["category"]
+        packagedetails["weight"] = result["weight"]
+        packagedetails["is_fragile"] = str(result["is_fragile"])
+        packagedetails["is_hazardous"] = str(result["is_hazardous"])
+        packagearray.insert(count, packagedetails)
+        count = count + 1
   cursor.close()
-  context = dict(data1 = names, data2 = emails)
+  tracking = []
+  cursor = g.conn.execute("select package_id from records natural join place natural join trasportaion;")
+  for result in cursor:
+      tracking.append(str(result["package_id"]))
+  cursor.close()
+  context = dict(data = customerdetails, packages = packagearray, trackingIds = tracking)
+  return render_template("customerinfo.html", **context)
+
+
+@app.route('/trackstatus', methods=['GET'])
+def trackstatus():
+  package = request.args['package']
+  cursor = g.conn.execute("select * from records natural join place natural join trasportaion natural join transport where package_id = '" + package + "';")
+  trackArray = []
+  for result in cursor:
+      trackdetails = {}    
+      trackdetails["area"] = result["area_description"]
+      trackdetails["departure_time"] = str(result["departure_time"])
+      trackdetails["mode"] = result["mode"]
+      trackArray.append(trackdetails) 
+  cursor.close()
+  context = dict(data = trackArray)
   return render_template("trackstatus.html", **context)
+
+
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
-  email = request.form['Email Address']
+  email_id = request.form['Email Address']
   Pass = request.form['Password']
-  return redirect('/customerDetails')
+  track_id = request.form['Tracking Id']
+  if track_id:
+      return redirect('/trackstatus')
+  else:
+      return redirect('/customerinfo')
+
+
 
 
 @app.route('/login')
