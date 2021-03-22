@@ -30,7 +30,7 @@ function validation(userData, trackIdData, trackingAvail){
     test = userData;
     var track_check = false;
     var mail_pass_check = false;
-    var email = $("input[name = 'Email Address']").val().trim();
+    var email = $("input[name = 'email']").val().trim();
     var password = $("input[name = 'Password']").val().trim();
     var tracking_no = $("input[name = 'package']").val().trim();
     track_check = tracking_no != "";
@@ -45,6 +45,7 @@ function validation(userData, trackIdData, trackingAvail){
        }else{
            if(trackIdData[tracking_no]){
                if(trackingAvail.indexOf(tracking_no) >= 0){
+                   $("input[name = 'email']").val("");
                    runAnime("/trackstatus");
                }else{
                   alert("No tracking available for this Tracking Number!"); 
@@ -64,7 +65,7 @@ function validation(userData, trackIdData, trackingAvail){
 
 <form id ="form-id" method="GET">
     <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute; top: 300px; left: 214px; background-color: #343a40!important; border-radius: 50px;">Customer Email and Password :   
-    <input type="text" name="Email Address", style="text-overflow: ellipsis!important;">
+    <input type="text" name="email", style="text-overflow: ellipsis!important;">
     <input type="text" name="Password", style="text-overflow: ellipsis!important;">
     </p>
     <div style = "top: 362px; position: absolute; left: 439px;">OR</div>

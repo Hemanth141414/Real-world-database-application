@@ -11,12 +11,22 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $("#track-details").hide();
+        $("#button-1").hide(); 
         $("#shipped-div-id").click(function(e){
            $("#track-details").show(); 
         })
     });
-    function load(data){
+    function buttonClick(){
+        $("#form-id").submit();
+    }
+    function load(rdata){
+        var data = rdata["trackArray"];
+        var emailId = rdata["email"];
         var str = "";
+        if(emailId != undefined && emailId != null && emailId.trim() != ""){
+           $("#button-1").show(); 
+            $("#hidden-input-email-id").val(emailId);
+        }
         for (var i in data) {
             var str0 = '<td class="track_dot"><span class="track_line"></span></td>'
             var str1 = "<td>" + data[i]["area"] + "</td>";
@@ -36,7 +46,8 @@
 </script>
   
 <body onload="load({{data}})">
-<a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1; Back to Home</a>
+<a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
+<button id = "button-1", onclick = "buttonClick()", class="btn btn-primary", style="top: 50px; left: 10px; position: absolute; width: 250px; font-size: large; background-color: #343a40!important; border-radius: 50px;"><span style = "font-size: large;">&#x25C1; Back to Customer Details </span></button>
 <div class="row shop-tracking-status", style ="top: 100px; position: absolute; width: 100%;">    
     <div class="col-md-12">
         <h4>Your order status: Click on Tracking icon for details</h4>
@@ -85,5 +96,8 @@
         </tbody>
     </table> 
   </div>
+<form id ="form-id", method="GET", action = "/customerinfo", type = hidden>
+    <input id = "hidden-input-email-id", type="hidden", name="email", style="text-overflow: ellipsis!important;">
+</form>
 </body>
 </html>    

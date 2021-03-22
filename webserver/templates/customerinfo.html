@@ -47,6 +47,7 @@
         var val = $($(e.parentElement.parentElement).find('td')[0]).text(); 
         if(tracking.indexOf(val) >= 0){
           $("#hidden-input-id").val(val);
+          $("#hidden-input-email-id").val(pageData.email_id);  
           $("#form-id").submit();  
         } else {
            alert("No tracking available for this package!"); 
@@ -91,9 +92,10 @@
     </table> 
   </li> 
 </ul>
-<a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1; Back to Home</a>
+<a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
 <form id ="form-id", method="GET", action = "/trackstatus", type = hidden>
     <input id = "hidden-input-id", type="hidden", name="package", style="text-overflow: ellipsis!important;">
- </form>
+    <input id = "hidden-input-email-id", type="hidden", name="email", style="text-overflow: ellipsis!important;">
+</form>
 </body>
 </html>    

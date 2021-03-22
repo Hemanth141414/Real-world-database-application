@@ -179,7 +179,7 @@ def another():
 
 @app.route('/customerinfo', methods=['GET'])
 def customerinfo():
-  email = request.args['Email Address']
+  email = request.args['email']
   cursor = g.conn.execute("select email_id, (first_name || ' ' || last_name) as name, (Street_Address || ', ' || Street_Name || ', ' || State || ', ' || Country) as address,  package.package_id, Service_Type, Category, Is_Fragile, Is_Hazardous, weight from customer natural join sender natural join package where email_id ='" + email + "';")
   customerdetails = {}
   packagearray = []
@@ -211,7 +211,9 @@ def customerinfo():
 @app.route('/trackstatus', methods=['GET'])
 def trackstatus():
   package = request.args['package']
+  email = request.args['email']
   cursor = g.conn.execute("select * from records natural join place natural join trasportaion natural join transport where package_id = '" + package + "';")
+  returnData = {}
   trackArray = []
   for result in cursor:
       trackdetails = {}    
@@ -220,7 +222,9 @@ def trackstatus():
       trackdetails["mode"] = result["mode"]
       trackArray.append(trackdetails) 
   cursor.close()
-  context = dict(data = trackArray)
+  returnData["trackArray"] = trackArray
+  returnData["email"] = email     
+  context = dict(data = returnData)
   return render_template("trackstatus.html", **context)
 
 
