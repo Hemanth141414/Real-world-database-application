@@ -222,8 +222,17 @@ def trackstatus():
       trackdetails["mode"] = result["mode"]
       trackArray.append(trackdetails) 
   cursor.close()
+  delivery = ""
+  status = "On Time"    
+  cursor = g.conn.execute("select * from receiver where package_id = '" + package + "';")
+  for result in cursor:
+      delivery = str(result["delivery_time"])
+      status = result["delivery_status"]
+  cursor.close()
   returnData["trackArray"] = trackArray
-  returnData["email"] = email     
+  returnData["email"] = email
+  returnData["status"] = status
+  returnData["delivery"] = delivery
   context = dict(data = returnData)
   return render_template("trackstatus.html", **context)
 

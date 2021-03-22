@@ -13,7 +13,7 @@
         $("#track-details").hide();
         $("#button-1").hide(); 
         $("#shipped-div-id").click(function(e){
-           $("#track-details").show(); 
+           $("#track-details").show();
         })
     });
     function buttonClick(){
@@ -23,6 +23,8 @@
         var data = rdata["trackArray"];
         var emailId = rdata["email"];
         var str = "";
+        $("#date-id").text($("#date-id").text() + ": " + rdata["delivery"]);
+        $("#status-id").text($("#status-id").text() + ": " + rdata["status"]);
         if(emailId != undefined && emailId != null && emailId.trim() != ""){
            $("#button-1").show(); 
             $("#hidden-input-email-id").val(emailId);
@@ -48,7 +50,7 @@
 <body onload="load({{data}})">
 <a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
 <button id = "button-1", onclick = "buttonClick()", class="btn btn-primary", style="top: 50px; left: 10px; position: absolute; width: 250px; font-size: large; background-color: #343a40!important; border-radius: 50px;"><span style = "font-size: large;">&#x25C1; Back to Customer Details </span></button>
-<div class="row shop-tracking-status", style ="top: 100px; position: absolute; width: 100%;">    
+<div class="row shop-tracking-status", style ="top: 180px; position: absolute; width: 100%;">    
     <div class="col-md-12">
         <h4>Your order status: Click on Tracking icon for details</h4>
         <div class="well", style = "height: 180px; width: 100%; position: absolute;">    
@@ -69,8 +71,8 @@
                     <span class="status">Tracking</span>
                     <div class="icon" style = "cursor:pointer;"></div>
                 </div>
-                <div class="image-order-status image-order-status-delivered active img-circle">
-                    <span class="status">Delivered</span>
+                <div id ="delivery-div-id", class="image-order-status image-order-status-delivered active img-circle">
+                    <span class="status">Delivery</span>
                     <div class="icon"></div>
                 </div>
                 <div class="image-order-status image-order-status-completed active img-circle">
@@ -81,7 +83,15 @@
         </div>
     </div>
 </div>
- <div id = "track-details", class="p-4", style = "top: 295px; position: absolute; width: 100%;">
+    <ul id="details", style = "top: 100px; position: absolute; font-size: x-large;">
+  <li id = "date-id">
+    Delivery Date:
+  </li>
+  <li id = "status-id">
+    Status:
+  </li>
+   </ul>
+ <div id = "track-details", class="p-4", style = "top: 375px; position: absolute; width: 100%;">
     <h3>Order Tracking details:</h3>
     <table class="table table-bordered track_tbl", id = "track-table-id-1">
         <thead>
