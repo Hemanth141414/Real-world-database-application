@@ -28,9 +28,9 @@ app = Flask(__name__, template_folder=tmpl_dir, static_folder=stc_dir)
 #
 # For example, if you had username zy2431 and password 123123, then the following line would be:
 #
-#     DATABASEURI = "postgresql://zy2431:123123@34.73.36.248/project1"
+#     DATABASEURI = "db_uri"
 #
-DATABASEURI = "postgresql://hp2581:499621@34.73.36.248/project1" # Modify this with your own credentials you received from Joseph!
+DATABASEURI = "db_uri"
 
 
 #
