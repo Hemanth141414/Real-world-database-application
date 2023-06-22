@@ -185,14 +185,69 @@ def user_sign_up():
 
 @app.route('/signin', methods=['GET'])
 def signin():
-  context = {}
+  username = request.args['user']
+  cursor = g.conn.execute("select * from task where username = '" + username + "';")
+  returnData = {}
+  tasks = []
+  for res in cursor:
+    taskrow = {}
+    taskrow["tid"] = str(res['tid'])
+    taskrow["title"] = str(res['title'])
+    taskrow["username"] = str(res['username'])
+    taskrow["status"] = str(res['status'])
+    taskrow["description"] = str(res['description'])
+    taskrow["duedate"] = str(res['duedate'])
+    tasks.append(taskrow)
+  cursor.close()
+  returnData["user"] = str(username)
+  returnData["taskData"] = tasks
+  context = dict(data = returnData)
   return render_template("task.html", **context) 
 
 @app.route('/edit_data', methods=['POST'])
 def edit_data():
-  context = {}
-  print(request.form.get('name'))
+  val = request.form.get('value')
+  col = request.form.get('column')
+  tid = request.form.get('tid')
+  cursor = g.conn.execute("UPDATE task SET " + col + " = '" + val + "' WHERE tid = '" + tid +"';")
   resp = jsonify(success=True)
+  return resp 
+
+@app.route('/delete_data', methods=['POST'])
+def delete_data():
+  tid = request.form.get('tid')
+  cursor = g.conn.execute("delete from task where tid = '" + tid + "';")
+  resp = jsonify(success=True)
+  return resp 
+
+@app.route('/create_data', methods=['POST'])
+def create_data():
+  title = request.form.get('title')
+  desc = request.form.get('description')
+  status = request.form.get('status')
+  duedate = request.form.get('duedate')
+  username = request.form.get('username')
+  print(title, desc, status, duedate, username)
+  cursor = g.conn.execute("INSERT INTO task (username, title, description, status, duedate) VALUES ('" + username + "', '" + title + "', '" + desc + "', '" + status + "', '" + duedate + "');")
+  resp = jsonify(success=True)
+  return resp 
+
+@app.route('/user_verification', methods=['POST'])
+def user_verification():
+  context = {}
+  username = request.form.get('username')
+  password = request.form.get('password')
+  cursor = g.conn.execute("select * from taskuser where username = '" + username + "';")
+  exist = False
+  for r in cursor:
+    exist = True
+    resp = jsonify(success=False)
+    resp.status_code = 409
+  if not exist:
+      cursor = g.conn.execute("INSERT INTO taskuser (username, password) VALUES ('" + username + "', '" + password + "');")
+      resp = jsonify(success=True)
+      resp.status_code = 200
+  cursor.close()
   return resp 
 
 @app.route('/customerinfo', methods=['GET'])

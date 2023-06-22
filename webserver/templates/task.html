@@ -42,27 +42,51 @@
                         "knockout": "knockout-2.2.0" //Needed if you use Knockout.
                     }
             });
+            var user;
+            var taskData;
+            var testData = [
+                       {'title': 'TASK 1', 'description': 'Task 1 desc', 'status':'Completed', 'duedate':'22-06-2023'},
+                       {'title': 'TASK 2', 'description': 'Task 2 desc', 'status':'In-progress', 'duedate':'22-06-2023'},
+                       {'title': 'TASK 3', 'description': 'Task 3 desc', 'status':'Started', 'duedate':'22-06-2023'},
+                       {'title': 'TASK 4', 'description': 'Task 4 desc', 'status':'Completed', 'duedate':'22-06-2023'},
+                       {'title': 'TASK 5', 'description': 'Task 5 desc', 'status':'Completed', 'duedate':'22-06-2023'}
+                    ];
+            function load(data){
+                user = data['user']
+                taskData = data['taskData']
+            }            
         </script>
 
         <script id="scriptInit" type="text/javascript">
+
+            function elementUpdate(val, tid, col){
+                $.ajax({
+                    url: "/edit_data",
+                    type: 'POST',
+                    data: {
+                        tid: tid,
+                        value: val,
+                        column: col
+                    },
+                    success: function (response) {
+                    },
+                    error: function (response) {
+                    }
+                });
+            }
             require(["wijmo.wijgrid"], function () {
             $(document).ready(function () {
                 $("#wijgrid").wijgrid({
                     allowSorting: true,
                     allowEditing: true,
                     allowPaging: true,
-                    pageSize: 3,
-                    data: [
-                        [27, 'Canada', 'Completed', '22-06-2023'],
-                        [43, 'Canada', 'Completed', '22-06-2023'],
-                        [24, 'Canada', 'In-progress', '22-06-2023'],
-                        [87, 'Canada', 'Started', '22-06-2023'],
-                        [1, 'United States', 'In-progress', '22-06-2023']
-                    ],
+                    pageSize: 5,
+                    data: taskData,
                     columns: [
-                        {headerText: "Number"},
-                        {headerText: "Nationality"},
-                        {headerText: "Player",
+                        {headerText: "Id", dataKey:'tid', visible:false},
+                        {headerText: "Title", dataKey:'title'},
+                        {headerText: "Description", dataKey:'description', allowSort: false},
+                        {headerText: "Status", dataKey: 'status',
                             cellFormatter: function (args) {
                                 if (args.row.type & wijmo.grid.rowType.data) {
                                     console.log(args.$container);
@@ -70,36 +94,119 @@
                                     var sel = document.createElement("select")
                                     $(sel).append('<option value="Completed">Completed</option><option value="In-progress">In-progress</option><option value="Started">Started</option>')
                                     sel.value = args.row.data[args.column.dataKey];
+                                    $(sel).attr('tid', args.row.data['tid']);
+                                    $(sel).attr('col', args.column.dataKey);
+                                    $(sel).on('change', function(e){
+                                        elementUpdate($(e.target).val(), $(e.target).attr('tid'),  $(e.target).attr('col'));
+                                    });
                                     args.$container.append(sel);
                                     return true;
                                 }   
                              }
 
                         },
-                        {headerText: "Position", dataType: "datetime", dataFormatString: "dd-mm-yyyy"}
+                        {headerText: "Due Date", dataKey: 'duedate',
+                            cellFormatter: function (args) {
+                                if (args.row.type & wijmo.grid.rowType.data) {
+                                    var div = document.createElement("div");
+                                    $(div).append('<input type="date" style="font-size:large;"></input>');
+                                    $(div).find('input').val(args.row.data[args.column.dataKey]);
+                                    $(div).find('input').attr('tid', args.row.data['tid']);
+                                    $(div).find('input').attr('col', args.column.dataKey);
+                                    $(div).find('input').on('change', function(e){
+                                        elementUpdate($(e.target).val(), $(e.target).attr('tid'), $(e.target).attr('col'));
+                                    });
+                                    args.$container.append(div);
+                                    return true;
+                                }
+                            }
+                        },
+                        {headerText: "Action", 
+                            cellFormatter: function (args) {
+                                if (args.row.type & wijmo.grid.rowType.data) {
+                                    var div = document.createElement("div");
+                                    $(div).append('<button class="order", style = "color: white; width:75%;"><span class="default">Delete</span></button>');
+                                    $(div).attr("rowData", JSON.stringify(args.row.data));
+                                    $(div).find('button').on('click', function(e){
+                                            var tid = JSON.parse($(e.target).parent().parent().attr('rowData'))['tid'];
+                                            $.ajax({
+                                                url: "/delete_data",
+                                                type: 'POST',
+                                                data: {
+                                                    tid: tid
+                                                },
+                                                success: function (response) {
+                                                    location.reload();
+                                                },
+                                                error: function (response) {
+                                                    console.log("Error in Delete.");
+                                                }
+                                            });
+                                        });
+                                    args.$container.append(div);
+                                    return true;
+                                }   
+                             }
+
+                        },
                     ],
-                    afterCellUpdate : function (e, args) {
+                    afterCellEdit : function (e, args) {
                         console.log("Cell data edit captured.");
+                        var col = args.cell.column().dataKey;
+                        var tid = args.cell.row().data['tid'];
+                        var val = args.cell.value();
                         $.ajax({
                             url: "/edit_data",
                             type: 'POST',
                             data: {
-                                name: "**************Hemanth**************"
+                                tid: tid,
+                                value: val,
+                                column: col
                             },
                             success: function (response) {
                             },
                             error: function (response) {
                             }
                         });
-                    }
+                    },
+                    currentCellChanged : function (e) {
+                        console.log("currentCellChanged triggered.");
+                    },
                 });
             });
             });
+
+            function create(e){
+                if($("#title").val().trim() == ""){
+                    alert("Please enter a valid Title.")
+                }
+                var title = $("#title").val().trim();
+                var desc = $("#description").val().trim();
+                var status = $("#status").val().trim();
+                var duedate = $("#duedate").val().trim();
+                $.ajax({
+                    url: "/create_data",
+                    type: 'POST',
+                    data: {
+                        title: title,
+                        description: desc,
+                        status: status,
+                        duedate: duedate,
+                        username: user
+                    },
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function (response) {
+                        console.log("Error in Delete.");
+                    }
+                });
+            }
         </script>
     </head>
 
-    <body>
-        <a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
+    <body onload="load({{data}})">
+        <a href = '/', class="btn btn-primary", id = "back-btn", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
         <div id="button-div">
             
         </div>
@@ -125,7 +232,7 @@
                 <input id="duedate" type="date" style="font-size:large;"></input>
         </div>
         <div id="create-task-btn" style="position: absolute; top: 84px; left: 910px;">
-            <button class="order", style = "color: white;">
+            <button class="order", style = "color: white;", onclick="create(this)">
                 <span class="default">Create Task</span>
             </button>
         </div> 

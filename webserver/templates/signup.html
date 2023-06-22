@@ -11,48 +11,41 @@
 <link rel="stylesheet" href="static/css/index.css">
 
 <script type="text/javascript">
-    var pageData;
-    var tracking = [];
-    var pck;
-    $(document).ready(function(){
-        $("#tableID").find('tbody').append("<tr><td>row content</td></tr>")
-    });
-    function load(data, packagesData, trackingData){
-       pageData = data;
-        var packages = [];
-        if (packagesData != undefined && packagesData.length > 0){
-            packages = packagesData;
-            pck = packagesData;
-        }
-        if (trackingData != undefined && trackingData.length > 0){
-            tracking = trackingData;
-        }
-        $("#name-id").text($("#name-id").text() + ": " + pageData.name);
-        $("#mail-id").text($("#mail-id").text() + ": " + pageData.email_id);
-        $("#address-id").text($("#address-id").text() + ": " + pageData.address);
-        var str = "";
-        for (var i in packages) {
-            var str1 = "<td>" + packages[i]["package_id"] + "</td>";
-            var str2 = "<td>" + packages[i]["service_type"] + "</td>";
-            var str3 = "<td>" + packages[i]["category"] + "</td>";
-            var str4 = "<td>" + packages[i]["weight"] + "</td>";
-            var str5 = "<td>" + packages[i]["is_fragile"] + "</td>";
-            var str6 = "<td>" + packages[i]["is_hazardous"] + "</td>";
-            var str7 = '<td><button class = "btn btn-primary", style = "height: 30px; width: 50px; background-color: #343a40!important", onclick = buttonclick(this)><span style = "font-size: small;">Track</span></button></td>';
-            str = str + "<tr>" + str1 + str2 + str3 + str4 + str5 + str6 + str7 + "</tr>";
-        }
-        $("#package-table-id").find('tbody').append(str);  
-    }
     function buttonclick(e){
-        debugger;
-        var val = $($(e.parentElement.parentElement).find('td')[0]).text(); 
-        if(tracking.indexOf(val) >= 0){
-          $("#hidden-input-id").val(val);
-          $("#hidden-input-email-id").val(pageData.email_id);  
-          $("#form-id").submit();  
-        } else {
-           alert("No tracking available for this package!"); 
-        } 
+        var username_value = $("#username").val().trim();
+        var password_value = $("#password").val().trim();
+        var repassword_value = $("#repassword").val().trim();
+        if(username_value == ""){
+            alert("Username is invalid.");
+            return;
+        }
+        if(password_value == ""){
+            alert("password is invalid.");
+            return;
+        }
+        if(password_value != repassword_value){
+            alert("Retype - password is not same as password.");
+            return;
+        }  
+        $.ajax({
+                url: "/user_verification",
+                type: 'POST',
+                data: {
+                    username: username_value,
+                    password: password_value 
+                },
+                success: function (response) {
+                    console.log("success signup!");
+                    $("#back-btn")[0].click();
+                },
+                error: function (response) {
+                    if(response.status = 409){
+                        console.log("User Exists.");
+                        console.log(response);
+                        alert("The user with username already exists. Please type in a different username.");
+                    }
+                }
+        });
     }
 </script>    
    
@@ -67,24 +60,22 @@
     }
     </style>
     
-<body onload="load({{data}}, {{packages}}, {{trackingIds}})">
-<a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
-<form id ="form-id", method="GET", action = "/user_sign_up">
+<body>
+<a href = '/', class="btn btn-primary",  id = "back-btn", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
 <div id="form div" style="position: absolute; top: 150px; left: 333px">
     <div id="user">
     <label for="username">Username: </label>
     <input type="text" id="username" name="username", style="text-overflow: ellipsis!important;">
     </div>
     <div id="pass">
-    <label for="username">Password: </label>
-    <input type="text" id="password" name="Password", style="text-overflow: ellipsis!important;">
+    <label for="password">Password: </label>
+    <input type="password" id="password" name="Password", style="text-overflow: ellipsis!important;">
     </div>
     <div id="repass">
-    <label for="username">Re-type password: </label>
-    <input type="text" id="repassword" name="Password", style="text-overflow: ellipsis!important;">
+    <label for="repassword">Re-type password: </label>
+    <input type="password" id="repassword" name="Password", style="text-overflow: ellipsis!important;">
     </div>
-    <button id="submit" class="order" style="font-size: x-large; position: absolute; left: 222px; color:white;">Submit</button>
+    <button onclick ="buttonclick(this)" id="submit" class="order" style="font-size: x-large; position: absolute; left: 222px; color:white;">Submit</button>
 </div>
-</form>
 </body>
 </html>    
