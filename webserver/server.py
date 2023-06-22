@@ -12,7 +12,7 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response, url_for
+from flask import Flask, request, render_template, g, redirect, Response, url_for, jsonify
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 stc_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
@@ -30,7 +30,7 @@ app = Flask(__name__, template_folder=tmpl_dir, static_folder=stc_dir)
 #
 #     DATABASEURI = "db_uri"
 #
-DATABASEURI = "db_uri"
+DATABASEURI = "postgresql://codio:codio@localhost:5432/codio"
 
 
 #
@@ -59,6 +59,7 @@ def before_request():
   The variable g is globally accessible.
   """
   try:
+    print("Trying...")
     g.conn = engine.connect()
   except:
     print("uh oh, problem connecting to database")
@@ -95,6 +96,7 @@ trackId_usernames = {}
 
 @app.route('/')
 def index():
+  print("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII")
   """
   request is a special object that Flask provides to access web request information:
 
@@ -107,12 +109,12 @@ def index():
 
   # DEBUG: this is debugging code to see what request looks like
   print(request.args)
-
+  
 
   #
   # example of a database query
   #
-  cursor = g.conn.execute("select email_id, password, package.package_id from customer natural join sender natural join package")
+  '''cursor = g.conn.execute("select email_id, password, package.package_id from customer natural join sender natural join package")
   for result in cursor:
     usernames_Pass[result['email_id']] = result['password'] # can also be accessed using result[0]
     trackId_usernames[str(result['package_id'])] = result['email_id'] # can also be accessed using result[0]
@@ -122,7 +124,7 @@ def index():
   cursor = g.conn.execute("select package_id from records natural join place natural join trasportaion;")
   for result in cursor:
       tracking.append(str(result["package_id"]))
-  cursor.close()
+  cursor.close()'''
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -150,7 +152,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(userData = usernames_Pass, trackData = trackId_usernames, trackingAvail = tracking)
+  context = dict(userData = {}, trackData = {}, trackingAvail = [])
 
 
   #
@@ -177,9 +179,25 @@ def back():
 def another():
   return render_template("track.html")
 
+@app.route('/user_sign_up')
+def user_sign_up():
+  return render_template("signup.html")
+
+@app.route('/signin', methods=['GET'])
+def signin():
+  context = {}
+  return render_template("task.html", **context) 
+
+@app.route('/edit_data', methods=['POST'])
+def edit_data():
+  context = {}
+  print(request.form.get('name'))
+  resp = jsonify(success=True)
+  return resp 
+
 @app.route('/customerinfo', methods=['GET'])
 def customerinfo():
-  email = request.args['email']
+  '''email = request.args['email']
   cursor = g.conn.execute("select email_id, (first_name || ' ' || last_name) as name, (Street_Address || ', ' || Street_Name || ', ' || State || ', ' || Country) as address,  package.package_id, Service_Type, Category, Is_Fragile, Is_Hazardous, weight from customer natural join sender natural join package where email_id ='" + email + "';")
   customerdetails = {}
   packagearray = []
@@ -204,13 +222,14 @@ def customerinfo():
   for result in cursor:
       tracking.append(str(result["package_id"]))
   cursor.close()
-  context = dict(data = customerdetails, packages = packagearray, trackingIds = tracking)
+  context = dict(data = customerdetails, packages = packagearray, trackingIds = tracking)'''
+  context = {}
   return render_template("customerinfo.html", **context)
 
 
 @app.route('/trackstatus', methods=['GET'])
 def trackstatus():
-  package = request.args['package']
+  '''package = request.args['package']
   email = request.args['email']
   cursor = g.conn.execute("select * from records natural join place natural join trasportaion natural join transport where package_id = '" + package + "';")
   returnData = {}
@@ -233,7 +252,8 @@ def trackstatus():
   returnData["email"] = email
   returnData["status"] = status
   returnData["delivery"] = delivery
-  context = dict(data = returnData)
+  context = dict(data = returnData)'''
+  context = {}
   return render_template("trackstatus.html", **context)
 
 

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" id="font-awesome-css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/css/trackstatus.css">
+    <link rel="stylesheet" href="static/css/index.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>    
+    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <!--Theme-->
+    <head>
+        <link href="https://cdn.wijmo.com/themes/aristo/jquery-wijmo.css" rel="stylesheet" type="text/css" />
+
+    <!--Wijmo Widgets CSS-->
+        <link href="https://cdn.wijmo.com/jquery.wijmo-pro.all.3.20133.19.min.css" rel="stylesheet" type="text/css" />
+
+
+        <style>
+            .wijmo-wijgrid tr.wijmo-wijgrid-row td.ui-state-highlight {
+                background: #c7daf2;
+                border-color: transparent;
+                color: black;
+            }
+            .wijmo-wijgrid tr.wijmo-wijgrid-row.ui-state-hover, .wijmo-wijgrid .wijmo-wijgrid-current-cell, .wijmo-wijgrid td.wijmo-wijgrid-rowheader.ui-state-active {
+                background: #bec6d2;
+                color: #000;
+            }
+        </style>
+    <!--RequireJs-->
+        <script type="text/javascript" src="https://cdn.wijmo.com/external/require.js"></script>
+        <script type="text/javascript">
+            requirejs.config({
+                baseUrl: "https://cdn.wijmo.com/amd-js/",
+                    paths: {
+                        "jquery": "jquery-1.9.1.min",
+                        "jquery-ui": "jquery-ui-1.10.1.custom.min",
+                        "jquery.ui": "jquery-ui",
+                        "jquery.mousewheel": "jquery.mousewheel.min",
+                        "globalize": "globalize.min",
+                        "bootstrap": "bootstrap.min", //Needed if you use Bootstrap.
+                        "knockout": "knockout-2.2.0" //Needed if you use Knockout.
+                    }
+            });
+        </script>
+
+        <script id="scriptInit" type="text/javascript">
+            require(["wijmo.wijgrid"], function () {
+            $(document).ready(function () {
+                $("#wijgrid").wijgrid({
+                    allowSorting: true,
+                    allowEditing: true,
+                    allowPaging: true,
+                    pageSize: 3,
+                    data: [
+                        [27, 'Canada', 'Completed', '22-06-2023'],
+                        [43, 'Canada', 'Completed', '22-06-2023'],
+                        [24, 'Canada', 'In-progress', '22-06-2023'],
+                        [87, 'Canada', 'Started', '22-06-2023'],
+                        [1, 'United States', 'In-progress', '22-06-2023']
+                    ],
+                    columns: [
+                        {headerText: "Number"},
+                        {headerText: "Nationality"},
+                        {headerText: "Player",
+                            cellFormatter: function (args) {
+                                if (args.row.type & wijmo.grid.rowType.data) {
+                                    console.log(args.$container);
+                                    console.log(args.row.data);
+                                    var sel = document.createElement("select")
+                                    $(sel).append('<option value="Completed">Completed</option><option value="In-progress">In-progress</option><option value="Started">Started</option>')
+                                    sel.value = args.row.data[args.column.dataKey];
+                                    args.$container.append(sel);
+                                    return true;
+                                }   
+                             }
+
+                        },
+                        {headerText: "Position", dataType: "datetime", dataFormatString: "dd-mm-yyyy"}
+                    ],
+                    afterCellUpdate : function (e, args) {
+                        console.log("Cell data edit captured.");
+                        $.ajax({
+                            url: "/edit_data",
+                            type: 'POST',
+                            data: {
+                                name: "**************Hemanth**************"
+                            },
+                            success: function (response) {
+                            },
+                            error: function (response) {
+                            }
+                        });
+                    }
+                });
+            });
+            });
+        </script>
+    </head>
+
+    <body>
+        <a href = '/', class="btn btn-primary", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
+        <div id="button-div">
+            
+        </div>
+        <div id="create-task-div" style="position:absolute; top:18px; left:-72px;">
+            <div id="title-div" style="position:relative; top:50px; left:247px;">   
+                <label for="title">Title:</label>  
+                <input id="title" style="font-size:large;"></input>
+            </div> 
+            <div id="description-div"  style="position:relative; top:17px; left:542px;">   
+                <label for="description">Description:</label>
+                <input id="description" style="font-size:large;"></input>
+            </div>
+            <div id="status-div"  style="position:relative; top:27px; left:226px;">   
+                <label for="status">Status:</label>
+                <select id="status" name="status" style="font-size:x-large;">
+                    <option value="Completed">Completed</option>
+                    <option value="In-progress">In-progress</option>
+                    <option value="Started">Started</option>
+                </select>
+            </div>
+            <div id="duedate-div"  style="position:relative; top:-6px; left:572px;">   
+                <label for="title">Duedate:</label>
+                <input id="duedate" type="date" style="font-size:large;"></input>
+        </div>
+        <div id="create-task-btn" style="position: absolute; top: 84px; left: 910px;">
+            <button class="order", style = "color: white;">
+                <span class="default">Create Task</span>
+            </button>
+        </div> 
+        </div>
+        <div style="top: 211px; left:225px; position: absolute; width:63%">
+            <table id="wijgrid"></table>
+        </div>
+    </body>
+</html>    

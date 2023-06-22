@@ -25,7 +25,17 @@ function runAnime(action){
            }, 9000);
        }
 }      
-    
+
+function signup(){
+    $("#form-id").attr('action', "/customerinfo")
+    $("#form-id").submit();
+}
+
+function signin(){
+    $("#form-id").attr('action', "/signin")
+    $("#form-id").submit();
+} 
+
 function validation(userData, trackIdData, trackingAvail){
     test = userData;
     var track_check = false;
@@ -35,45 +45,46 @@ function validation(userData, trackIdData, trackingAvail){
     var tracking_no = $("input[name = 'package']").val().trim();
     track_check = tracking_no != "";
     mail_pass_check = email != "" && password != "";
-    if(track_check || mail_pass_check){   
-       if(mail_pass_check){
-           if(userData[email] == password){
-               runAnime("/customerinfo");
-           } else{
-               $("#validation-msg").show();  
-           }
-       }else{
-           if(trackIdData[tracking_no]){
-               if(trackingAvail.indexOf(tracking_no) >= 0){
-                   $("input[name = 'email']").val("");
-                   runAnime("/trackstatus");
-               }else{
-                  alert("No tracking available for this Tracking Number!"); 
-               }
-           } else{
-               $("#validation-msg").show();  
-           }
-       } 
-      } else {
+    if(mail_pass_check){
+        if(userData[email] == password){
+            runAnime("/trackstatus");
+        } else{
+            $("#validation-msg").show();  
+        }
+    }
+    else {
          $("#validation-msg").show();  
-      }
+    }
   }  
 </script>
 <body>
 <h1 class="navbar navbar-expand-lg bg-primary text-white mb-2" style = "width: 100%; top: 0px; position: absolute; background-color: #343a40!important">TrackLite: Tracking app</h1>
-<img src="static/images/digital-globe.jpg", alt = "logo", style = "width: 100%; height: 100%; opacity: 0.5">
-
 <form id ="form-id" method="GET">
-    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute; top: 300px; left: 214px; background-color: #343a40!important; border-radius: 50px;">Customer Email and Password :   
+    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute; top: 342px; left: 211px; background-color: #343a40!important; border-radius: 50px;">Username:   
     <input type="text" name="email", style="text-overflow: ellipsis!important;">
+    </p>
+    <div style = "top: 362px; position: absolute; left: 439px;"></div>
+    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute;top: 400px;left: 214px;background-color: #343a40!important;border-radius: 50px;">Password:   
     <input type="text" name="Password", style="text-overflow: ellipsis!important;">
     </p>
-    <div style = "top: 362px; position: absolute; left: 439px;">OR</div>
-    <p class="navbar navbar-expand-lg bg-primary text-white mb-2" style="position: absolute;top: 400px;left: 214px;background-color: #343a40!important;border-radius: 50px;">Tracking Number:   
-    <input type="text" name="package", style="text-overflow: ellipsis!important;">
-    </p>
 </form>
-<button class="order", id = "go-button-id", onclick = "validation({{userData}}, {{trackData}}, {{trackingAvail}})", style = "position: absolute; top: 393px; left: 732px;"><span class="default">Go</span><span class="success">Fetching...<svg viewbox="0 0 12 10">
+<a href = '/user_sign_up', class="order", style = "position: absolute; top: 540px; left: 540px; color: white;"> <span class="default">Sign Up</span></a>
+<!--<button class="order", id="signup" onclick = "signup()" , style = "position: absolute; top: 540px; left: 540px; color: white;"><span class="default">Sign Up</span><span class="success">Setting up...<svg viewbox="0 0 12 10">
+            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+        </svg></span>
+    <div class="box"></div>
+    <div class="truck">
+        <div class="back"></div>
+        <div class="front">
+            <div class="window"></div>
+        </div>
+        <div class="light top"></div>
+        <div class="light bottom"></div>
+    </div>
+    <div class="lines"></div>
+    </button> 
+ -->   
+<button class="order", id = "go-button-id", onclick = "signin()", style = "position: absolute; top: 393px; left: 610px;"><span class="default">Go</span><span class="success">Fetching...<svg viewbox="0 0 12 10">
             <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
         </svg></span>
     <div class="box"></div>
