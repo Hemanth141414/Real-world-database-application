@@ -211,8 +211,10 @@ def signin():
     context = dict(data = returnData)
     return render_template("task.html", **context) 
   else:
-    resp = jsonify(success=False)
-    return resp
+    retData = {}
+    retData['error'] = "User credentials are invalid."
+    context = dict(data = retData)
+    return render_template("index.html", **context)
 
 @app.route('/edit_data', methods=['POST'])
 def edit_data():

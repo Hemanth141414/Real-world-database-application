@@ -12,7 +12,11 @@ var test;
 $(document).ready(function(){
     $("#validation-msg").hide();  
 });
-
+function load(data){
+    if(data && data["error"]){
+        alert(data["error"]);
+    }
+}
 function runAnime(action){
     $("#validation-msg").hide(); 
        let button = $("#go-button-id");
@@ -61,7 +65,7 @@ function validation(userData, trackIdData, trackingAvail){
     }
   }  
 </script>
-<body>
+<body onload="load({{data}})">
 <h1 class="navbar navbar-expand-lg bg-primary text-white mb-2" style = "width: 100%; top: 0px; position: absolute; background-color: #343a40!important">TrackLite: Tracking app</h1>
 <h3 style=" top: 140px; position: absolute;">For new Users, please click on "Sign Up" button at the bottom.</h3>
 <h3 style=" top: 217px; position: absolute;">Existing users, please enter your credentials and click "Go".</h3>
