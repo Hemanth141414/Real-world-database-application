@@ -80,7 +80,7 @@
                     allowSorting: true,
                     allowEditing: true,
                     allowPaging: true,
-                    pageSize: 5,
+                    pageSize: 4,
                     data: taskData,
                     columns: [
                         {headerText: "Id", dataKey:'tid', visible:false},
@@ -121,7 +121,7 @@
                                 }
                             }
                         },
-                        {headerText: "Action", 
+                        {headerText: "Action", allowSort: false,  
                             cellFormatter: function (args) {
                                 if (args.row.type & wijmo.grid.rowType.data) {
                                     var div = document.createElement("div");
@@ -178,7 +178,12 @@
 
             function create(e){
                 if($("#title").val().trim() == ""){
-                    alert("Please enter a valid Title.")
+                    alert("Please enter a valid Title.");
+                    return true;
+                }
+                if($("#duedate").val().trim() == ""){
+                    alert("Please enter a valid Due Date.");
+                    return true;
                 }
                 var title = $("#title").val().trim();
                 var desc = $("#description").val().trim();
@@ -198,7 +203,7 @@
                         location.reload();
                     },
                     error: function (response) {
-                        console.log("Error in Delete.");
+                        console.log("Error in Creating task.");
                     }
                 });
             }
@@ -206,38 +211,40 @@
     </head>
 
     <body onload="load({{data}})">
-        <a href = '/', class="btn btn-primary", id = "back-btn", style="top: 10px; left: 10px; position: absolute; width: 200px; font-size: large; background-color: #343a40!important; border-radius: 50px;"> &#x25C1;&#x25C1; Back to Home</a>
-        <div id="button-div">
-            
-        </div>
-        <div id="create-task-div" style="position:absolute; top:18px; left:-72px;">
-            <div id="title-div" style="position:relative; top:50px; left:247px;">   
+        <a href = '/', class="order", id = "back-btn", style="top: 10px; left: 10px; position: absolute; width: 135px; font-size: large; background-color: #343a40!important; border-radius: 50px;"><span class="default">&#x25C1;&#x25C1; Sign Out</span></a>
+        <div id="create-task-div" style="position:absolute; top:65px; left:-72px;">
+            <div id="title-div" style="position:relative; top:20px; left:247px;">   
                 <label for="title">Title:</label>  
                 <input id="title" style="font-size:large;"></input>
             </div> 
-            <div id="description-div"  style="position:relative; top:17px; left:542px;">   
+            <div id="description-div"  style="position:relative; top:-15px; left:542px;">   
                 <label for="description">Description:</label>
                 <input id="description" style="font-size:large;"></input>
             </div>
-            <div id="status-div"  style="position:relative; top:27px; left:226px;">   
+            <div id="status-div"  style="position:relative; top:-7px; left:226px;">   
                 <label for="status">Status:</label>
                 <select id="status" name="status" style="font-size:x-large;">
-                    <option value="Completed">Completed</option>
                     <option value="In-progress">In-progress</option>
                     <option value="Started">Started</option>
+                    <option value="Completed">Completed</option>
                 </select>
             </div>
-            <div id="duedate-div"  style="position:relative; top:-6px; left:572px;">   
+            <div id="duedate-div"  style="position:relative; top:-44px; left:572px;">   
                 <label for="title">Duedate:</label>
                 <input id="duedate" type="date" style="font-size:large;"></input>
         </div>
-        <div id="create-task-btn" style="position: absolute; top: 84px; left: 910px;">
+        <div style="top: 119px; position: absolute; left: 112px; width:300%;">
+            <h4>You can add tasks by "Create Task" button, edit as mentioned below and delete by clicking "Delete button for each task."</h4>
+            <h5>*The Grid below has inline editing feature. Please double click on text fields to edit. Press 'Enter' after editing text(Title, Description) to save the changes. For Status and Due Date fields just select your value to save the changes.</h5>
+            <h5>*Click on columns to sort or click on arrow head at the corner for each column. Arrow head seen when you click on the column. Direction indicates the sort order</h5>
+        </div>
+        <div id="create-task-btn" style="position: absolute; top: 39px; left: 910px;">
             <button class="order", style = "color: white;", onclick="create(this)">
                 <span class="default">Create Task</span>
             </button>
         </div> 
         </div>
-        <div style="top: 211px; left:225px; position: absolute; width:63%">
+        <div style="top: 255px; left:225px; position: absolute; width:63%">
             <table id="wijgrid"></table>
         </div>
     </body>

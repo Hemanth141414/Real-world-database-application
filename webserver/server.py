@@ -186,23 +186,33 @@ def user_sign_up():
 @app.route('/signin', methods=['GET'])
 def signin():
   username = request.args['user']
-  cursor = g.conn.execute("select * from task where username = '" + username + "';")
-  returnData = {}
-  tasks = []
+  password = request.args['password']
+  cursor = g.conn.execute("select * from taskuser where username = '" + username + "' AND password = '" + password + "';")
+  userExists = False
   for res in cursor:
-    taskrow = {}
-    taskrow["tid"] = str(res['tid'])
-    taskrow["title"] = str(res['title'])
-    taskrow["username"] = str(res['username'])
-    taskrow["status"] = str(res['status'])
-    taskrow["description"] = str(res['description'])
-    taskrow["duedate"] = str(res['duedate'])
-    tasks.append(taskrow)
+    userExists = True
   cursor.close()
-  returnData["user"] = str(username)
-  returnData["taskData"] = tasks
-  context = dict(data = returnData)
-  return render_template("task.html", **context) 
+  if(userExists):
+    cursor = g.conn.execute("select * from task where username = '" + username + "';")
+    returnData = {}
+    tasks = []
+    for res in cursor:
+      taskrow = {}
+      taskrow["tid"] = str(res['tid'])
+      taskrow["title"] = str(res['title'])
+      taskrow["username"] = str(res['username'])
+      taskrow["status"] = str(res['status'])
+      taskrow["description"] = str(res['description'])
+      taskrow["duedate"] = str(res['duedate'])
+      tasks.append(taskrow)
+    cursor.close()
+    returnData["user"] = str(username)
+    returnData["taskData"] = tasks
+    context = dict(data = returnData)
+    return render_template("task.html", **context) 
+  else:
+    resp = jsonify(success=False)
+    return resp
 
 @app.route('/edit_data', methods=['POST'])
 def edit_data():
@@ -210,6 +220,7 @@ def edit_data():
   col = request.form.get('column')
   tid = request.form.get('tid')
   cursor = g.conn.execute("UPDATE task SET " + col + " = '" + val + "' WHERE tid = '" + tid +"';")
+  cursor.close()
   resp = jsonify(success=True)
   return resp 
 
@@ -217,6 +228,7 @@ def edit_data():
 def delete_data():
   tid = request.form.get('tid')
   cursor = g.conn.execute("delete from task where tid = '" + tid + "';")
+  cursor.close()
   resp = jsonify(success=True)
   return resp 
 
@@ -229,6 +241,7 @@ def create_data():
   username = request.form.get('username')
   print(title, desc, status, duedate, username)
   cursor = g.conn.execute("INSERT INTO task (username, title, description, status, duedate) VALUES ('" + username + "', '" + title + "', '" + desc + "', '" + status + "', '" + duedate + "');")
+  cursor.close()
   resp = jsonify(success=True)
   return resp 
 
