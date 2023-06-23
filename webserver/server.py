@@ -30,7 +30,7 @@ app = Flask(__name__, template_folder=tmpl_dir, static_folder=stc_dir)
 #
 #     DATABASEURI = "db_uri"
 #
-DATABASEURI = "postgresql://codio:codio@localhost:5432/codio"
+DATABASEURI = "postgresql://hemanthchandrapalle:123@localhost:5432/hemanthchandrapalle"
 
 
 #
@@ -350,7 +350,6 @@ def login():
 
 if __name__ == "__main__":
   import click
-
   @click.command()
   @click.option('--debug', is_flag=True)
   @click.option('--threaded', is_flag=True)
@@ -371,6 +370,7 @@ if __name__ == "__main__":
 
     HOST, PORT = host, port
     print("running on %s:%d" % (HOST, PORT))
-    app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8111)
 
   run()
